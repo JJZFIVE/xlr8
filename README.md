@@ -1,8 +1,14 @@
-# Basic Sample Hardhat Project
+# XLR8
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Vroom Vroom
 
-Try running some of the following tasks:
+### Next Commands
+
+```shell
+npm run dev
+```
+
+### Hardhat commands
 
 ```shell
 npx hardhat accounts
