@@ -10,10 +10,21 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 /**
  * @dev Required interface of an ERC721 compliant contract.
  */
-interface ModifiedIERC721 is IERC165 {
+interface ComponentIERC721 is IERC165 {
 
     // NEW: mintFromMinter
-    function mintFromMinter() external returns (uint256 tokenId);
+    function mintFromMinter(address _msgSender) external returns (bool);
+
+    // NEW: setOffset
+    function setOffset(uint256 _offset) external;
+
+    // NEW: maxSupply
+    function maxSupply() external returns (uint256);
+
+    // NEW: NFTCreated
+    event NFTCreated(uint256 indexed tokenId, address indexed creatorAddress);
+
+
 
     /**
      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
