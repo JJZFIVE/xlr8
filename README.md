@@ -2,6 +2,14 @@
 
 Vroom Vroom
 
+## Uploading to IPFS
+
+```
+cd ipfs-uploading
+npm install
+node upload-directory.js --token={TOKEN FROM WEB3.STORAGE}
+```
+
 ### Next Commands
 
 ```shell
