@@ -13,6 +13,7 @@ contract ComponentNFT is ERC721, Ownable {
     using Strings for uint256;
 
     address public XLR8Minter;
+    address public Car;
     uint256 public maxSupply;
 
     string public baseURI; 
@@ -28,6 +29,11 @@ contract ComponentNFT is ERC721, Ownable {
     constructor(uint256 _maxSupply) ERC721("REPLACE ME WITH NAME", "REPLACE ME WITH TICKER") {
         maxSupply = _maxSupply;
         baseURI = "Pre-reveal mystery URI here"; // Pre-reveal mystery URI
+    }
+
+    function setCarAddress(address _address) public onlyOwner {
+        Car = _address;
+        setApprovalForAll(Car, true); // Allows car fusing function to call transferFrom
     }
 
     function setXLR8MinterAddress(address _address) public onlyOwner {

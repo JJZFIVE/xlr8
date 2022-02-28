@@ -2,16 +2,15 @@
 pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ComponentIERC721.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol"; 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./IXLR8Minter.sol";
 
-// @dev Minting contract calls VRF once, passes same offset to all components
+// Minting contract calls VRF once, passes same offset to all components
 
 // Deploy second, after the xlr8 component contracts
-contract XLR8Minter is Ownable, VRFConsumerBase {
+contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     using Counters for Counters.Counter;
 
     mapping(address => bool) public whitelisted;
@@ -126,18 +125,20 @@ contract XLR8Minter is Ownable, VRFConsumerBase {
         require(vrfRequestId == requestId, "VRF Request Id must match");
         uint256 componentMaxSupply = wheelContract.maxSupply();
         offset = (randomness % (componentMaxSupply - 1)) + 1;
-        
+        if (offset == 0) {
+            offset = 1;
+        }
+
         wheelContract.setOffset(offset);
         engineContract.setOffset(offset);
         buildContract.setOffset(offset);
         wrappingContract.setOffset(offset);
     }
 
+    // Might want to change this so we can't rugpull, or add an "amount" to pull a certain amount
     function withdraw() onlyOwner public {
         uint balance = address(this).balance;
         payable(msg.sender).transfer(balance);
     }
-
-    
 
 }
