@@ -136,7 +136,8 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     }
 
     // Might want to change this so we can't rugpull, or add an "amount" to pull a certain amount
-    function withdraw() onlyOwner public {
+    // make it so we can pull out an amount
+    function withdraw(uint256 _amount) onlyOwner public {
         uint balance = address(this).balance;
         payable(msg.sender).transfer(balance);
     }
