@@ -66,8 +66,6 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         fee = 0.1 * 10 ** 18; // (Varies by network and job) // TAKEN FROM EXAMPLE, CHANGE 
     }
 
-    
-
     // Be sure to add the offset when pushing the id's to the API call so correct metadata is used
     // Check if these id's are owned by the msg.sender
     function fuseIntoCar(uint256 _wheelId, uint256 _engineId, uint256 _buildId, uint256 _wrappingId) public {
@@ -78,8 +76,11 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         require(wrappingContract.ownerOf(_wrappingId) == msg.sender, "Sender doesn't own wrapping");
         require(offset != 0, "Offset hasn't been determined yet by the minting contract");
 
-        // TODO: Add transfering of the car. Put these in require blocks so it must transfer for this to work.
-        // What happens if one transfer works but the other doesn't? Does the one still transfer? This shouldn't happen
+        // TODO: Add transfering of the components
+        safeTransferFrom(msg.sender, address(this), _wheelId);
+        safeTransferFrom(msg.sender, address(this), _engineId);
+        safeTransferFrom(msg.sender, address(this), _buildId);
+        safeTransferFrom(msg.sender, address(this), _wrappingId);
 
         uint256 wheelMetadataId = (_wheelId + offset) % maxComponentSupply;
         uint256 engineMetadataId = (_engineId + offset) % maxComponentSupply;
