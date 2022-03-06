@@ -12,7 +12,8 @@ import "./IXLR8Minter.sol";
 // Deploy second, after the xlr8 component contracts
 contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     using Counters for Counters.Counter;
-
+    
+    // if you want to get fancy, merkle proofs/roots are becoming more commonly used for whitelisting, more efficient i believe than manually adding a bunch of people or loading a bunch of addresses into the constructor 
     mapping(address => bool) public whitelisted;
     mapping(address => uint256) public addressToNumberOfMints;
 
@@ -32,6 +33,8 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     // For Minting
     uint256 public mintingFee;
     uint256 public saleStartTime; // Block timestamp of when the minting opens
+    
+    // remember - private variables are not truly private, so someone could discover this value if technical. 
     Counters.Counter private _mintingCounter; // Range: [0, 8)
     bool public revealBool = false;
 
@@ -42,7 +45,9 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     address _engineContract,
     address _buildContract,
     address _wrappingContract
-    ) VRFConsumerBase(
+    ) 
+    // probably a good idea to not hardcode this but rather add as param in constructor to allow for easy testnet configuration
+    VRFConsumerBase(
         0xf0d54349aDdcf704F77AE15b96510dEA15cb7952,
         0x514910771AF9Ca656af840dff83E8264EcF986CA
     ) {
@@ -63,7 +68,12 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     // function presaleMint() public payable {}
 
     // It's assumed that max supplies for each component are equal
+    // saying it again here for repetition (also it's been a while since i've looked at the contracts) - this implementation is currently just randomness by obfuscation. 
+    // if you're looking to save $ on VRF calls do some pseudorandom thing like a hash of block.difficult, block.number, and the person's wallet 
+    // ^^ something like that make it a lot more difficult for someone to manipulate to get a specific part
     function mintRandomComponent() public payable {
+        // add: require(tx.origin == msg.sender) to prevent smart contracts (and therefore bots) from minting.
+        // https://jbecker.dev/research/adidas-originals/
         require(block.timestamp >= saleStartTime, "Sale has not started");
         require(msg.value >= mintingFee, "The value submitted is less than the minting fee");
         require(addressToNumberOfMints[msg.sender] < 4, "Sender has already minted the maximum of 4 components"); // Each address can only mint up to 4 components
@@ -93,6 +103,9 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
             require(wrappingContract.mintFromMinter(msg.sender), "Max supply already reached");
         }
         // Something's gone wrong if this block executes
+        // not a fan of this pattern - it's basically saying you don't trust the code lol
+        // it'll never exceed 7 based off the first condition so this will never happen 
+        // but if you do want to keep it you could just do revert(), no need for the falsy condition to throw an error 
         else {
             require(1 == 0, "Something's wrong with _mintingCounter");
         }
@@ -113,6 +126,8 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
         revealBool = true;
     }
     
+    // do you want this to have a modifier - onlyOwner? 
+    // what's the difference between reveal and setRevealBool?
     function reveal() public {
         require(offset == 0, "Offset is already set");
         require(vrfRequestId == 0, "Randomness already requested");
@@ -122,6 +137,8 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
 
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
         require(offset == 0, "Offset is already set");
+        
+        // I don't think you need to check the requestId, as this function is called by Chainlink's contracts automatically via rawFulfillRandomness() 
         require(vrfRequestId == requestId, "VRF Request Id must match");
         uint256 componentMaxSupply = wheelContract.maxSupply();
         offset = (randomness % (componentMaxSupply - 1)) + 1;
@@ -129,6 +146,7 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
             offset = 1;
         }
 
+        // instead of four external calls, can these four contracts get the value from this contract somehow? 
         wheelContract.setOffset(offset);
         engineContract.setOffset(offset);
         buildContract.setOffset(offset);

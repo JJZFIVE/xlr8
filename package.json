@@ -1,3 +1,5 @@
+// It looks like there's a lot going on in this repo - SC code, IPFS/api work, and a front end
+// It's a big disorganized - yarn workspaces might help: https://classic.yarnpkg.com/lang/en/docs/workspaces/
 {
   "name": "xlr8",
   "private": true,
