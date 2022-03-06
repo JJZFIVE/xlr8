@@ -1,0 +1,10 @@
+{
+  "image": "ipfs://<CID FOR CAR IMAGE>",
+  "vox": "ipfs://<CID FOR CAR VOX FILE>",
+  "attributes": [
+    { "trait_type": "Season", "value": 0 },
+    { "trait_type": "Speed", "value": 49 },
+    { "trait_type": "Acceleration", "value": 92 },
+    { "trait_type": "Handling", "value": 58 }
+  ]
+}

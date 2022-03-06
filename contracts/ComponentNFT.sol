@@ -31,7 +31,7 @@ contract ComponentNFT is ERC721, Ownable {
         baseURI = "Pre-reveal mystery URI here"; // Pre-reveal mystery URI
     }
 
-    function setCarAddress(address _address) public onlyOwner {
+    function setCarContractAddress(address _address) public onlyOwner {
         Car = _address;
         setApprovalForAll(Car, true); // Allows car fusing function to call transferFrom
     }
