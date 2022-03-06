@@ -135,11 +135,11 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
         wrappingContract.setOffset(offset);
     }
 
-    // Might want to change this so we can't rugpull, or add an "amount" to pull a certain amount
-    // make it so we can pull out an amount
+    // Talk to the guys about this, might want to limit our ability to pull out all at once for public trust
     function withdraw(uint256 _amount) onlyOwner public {
         uint balance = address(this).balance;
-        payable(msg.sender).transfer(balance);
+        require(_amount <= balance, "Withdraw amount exceeds contract balance");
+        payable(owner()).transfer(_amount);
     }
 
 }

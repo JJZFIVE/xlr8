@@ -71,8 +71,8 @@ contract ComponentNFT is ERC721, Ownable {
         baseURI = _baseURI;
     }
 
-    //function setOffset(uint256 _offset) public onlyMinter {
-      //  offset = _offset;
-   // }
+    function setOffset(uint256 _offset) public onlyMinter {
+        offset = _offset;
+    }
 
 }

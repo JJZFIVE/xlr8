@@ -78,6 +78,9 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         require(wrappingContract.ownerOf(_wrappingId) == msg.sender, "Sender doesn't own wrapping");
         require(offset != 0, "Offset hasn't been determined yet by the minting contract");
 
+        // TODO: Add transfering of the car. Put these in require blocks so it must transfer for this to work.
+        // What happens if one transfer works but the other doesn't? Does the one still transfer? This shouldn't happen
+
         uint256 wheelMetadataId = (_wheelId + offset) % maxComponentSupply;
         uint256 engineMetadataId = (_engineId + offset) % maxComponentSupply;
         uint256 buildMetadataId = (_buildId + offset) % maxComponentSupply;
@@ -106,13 +109,29 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
     }
 
     /**
-    * Receive the response in the form of uint256
+    * Receive the response in the form of string
     */ 
     function fulfill(bytes32 _requestId, bytes32 _tokenURI) public recordChainlinkFulfillment(_requestId)
     {
         string memory tokenURI = bytes32ToString(_tokenURI);
         uint256 tokenId = requestIdToTokenId[_requestId];
         _setTokenURI(tokenId, tokenURI); 
+    }
+
+    function destructCar(uint256 _carTokenId) public {
+        require(ownerOf(_carTokenId) == msg.sender, "The sender does not own that car!");
+        _burn(_carTokenId);
+
+        // Transfer the correct components back to the sender
+        Components storage components = carIdToComponents[_carTokenId];
+        uint32 wheel_id = components.wheel_id;
+        uint32 engine_id = components.engine_id;
+        uint32 build_id = components.build_id;
+        uint32 wrapping_id = components.wrapping_id;
+        _transfer(address(this), msg.sender, wheel_id);
+        _transfer(address(this), msg.sender, engine_id);
+        _transfer(address(this), msg.sender, build_id);
+        _transfer(address(this), msg.sender, wrapping_id);
     }
 
 
@@ -140,11 +159,8 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         fee = _fee;
     }
 
-
     function updateOffset() public {
         offset = XLR8Minter.offset();
     }
-
-
 
 }
