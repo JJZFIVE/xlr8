@@ -5,8 +5,16 @@ app.get("/:wheel-:engine-:build-:wrapping", function (req, res) {
   const wheel_id = req.params.wheel;
   const engine_id = req.params.engine;
   const build_id = req.params.build;
+  const wrapping_id = req.params.wrapping;
 
-  /*
+  return res.send("Hello world");
+});
+
+app.listen(process.env.PORT || 8080); // Not sure what this point is
+
+// Layout:
+
+/*
   // Preuploading Steps:
   for i in range(cars)
     // STEP 1; upload all component images to IPFS
@@ -40,29 +48,26 @@ app.get("/:wheel-:engine-:build-:wrapping", function (req, res) {
 
 */
 
-  console.log(wheel_id);
-  return res.send("Hello world");
-});
-
-app.listen(process.env.PORT || 8080); // Not sure what this point is
-
-// TODO:
 /*
-1. describe the API endpoint and figure out how to enumerate the 4 component id's - DONE
-    Endpoint link: APILINKHERE/[wheel_id]-[engine_id]-[build_id]-[wrapping_id]
-2. talk about how this can be exploited
-3. Discuss using MongoDB for storing Write the pseudocode for mongodb
-4. MONGO: {wheel: W, engine: X, wrapping Y, build Z, IPFS_METATA_LINK: SOIFEIEIFHSNIOHS, image: FAFHAIAOHFHAIOFNOIAWH}
+Uploading in directory vs. individually:
 
-Store a certain key within this server so only we can call mongo
+WHEEL IMAGES: in unique directory
+ENGINE IMAGES: in unique directory
+BUILD IMAGES: in unique directory
+WRAPPING IMAGES: in unique directory
 
+WHEEL VOX: in unique directory
+ENGINE VOX: in unique directory
+BUILD VOX: in unique directory
+WRAPPING VOX: in unique directory
 
+WHEEL METADATA: in unique directory
+ENGINE METADATA: in unique directory
+BUILD METADATA: in unique directory
+WRAPPING METADATA: in unique directory
 
-WHEELS: in directory
-ENGINES: in directory
-BUILDS: in directory
-WRAPPINGS: in directory
-
-FULL 
-FULL CARS: not in directory, uploaded individually
+FULL CAR IMAGES: not in directory, uploaded individually
+FULL CAR VOX: not in directory, uploaded individually
+FULL CAR METADATA: not in directory, uploaded individually
+    this is what's stored in mongo
 */
