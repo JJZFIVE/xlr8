@@ -1,0 +1,23 @@
+Project Management
+
+Files we're working on right now:
+
+1. api/server.js - Contains the endpoint (done with express) that will be called by Chainlink
+- TODO: Be able to connect mongoose to our MongoDB Atlas TEST account with credentials:
+username: jjzfive-harkness
+password: 4WAd%40%213NGJ%40kKji
+    - heads up: mongo connection doesn't like @ and ! 
+
+- TODO: Enumerate the part numbers at the end of the get request with express (just a google search)
+- TODO: Figure out querying mongo with the token indices
+    - How do we test this? Develop testing
+
+2. api/models/carmodels.js - unfinished car schema
+- This has already been started
+- TODO: research mongoose schema creation
+- TODO: develop tests to see if what's been created is correct
+
+3. api/.env - Ensures that if someone has the github repo, they cannot see the login variables 
+- Set up .env and environment variables, use dotenv to pull into server.js file
+
+
