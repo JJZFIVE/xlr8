@@ -7,7 +7,6 @@ const CarSchema = new mongoose.Schema({
     type: Number,
     required: true,
     trim: true,
-    lowercase: true,
     validate(value) {
       if (value > MAX_COMPONENT_SUPPLY || value < 0)
         throw new Error("Invalid wheel value");
@@ -17,7 +16,6 @@ const CarSchema = new mongoose.Schema({
     type: Number,
     required: true,
     trim: true,
-    lowercase: true,
     validate(value) {
       if (value > MAX_COMPONENT_SUPPLY || value < 0)
         throw new Error("Invalid engine value");
@@ -27,7 +25,6 @@ const CarSchema = new mongoose.Schema({
     type: Number,
     required: true,
     trim: true,
-    lowercase: true,
     validate(value) {
       if (value > MAX_COMPONENT_SUPPLY || value < 0)
         throw new Error("Invalid build value");
@@ -37,7 +34,6 @@ const CarSchema = new mongoose.Schema({
     type: Number,
     required: true,
     trim: true,
-    lowercase: true,
     validate(value) {
       if (value > MAX_COMPONENT_SUPPLY || value < 0)
         throw new Error("Invalid wrapping value");
@@ -45,20 +41,20 @@ const CarSchema = new mongoose.Schema({
   },
   fullcarimage: {
     type: String,
-    default: null,
-    required: true,
+    default: "",
+    // required: true, uncomment this for real thing
     trim: true,
   },
   fullcarvox: {
     type: String,
-    default: null,
-    required: true,
+    default: "",
+    // required: true, uncomment this for real thing
     trim: true,
   },
   fullcarmetadata: {
     type: String,
-    default: null,
-    required: true,
+    default: "",
+    // required: true, uncomment this for real thing
     trim: true,
   },
 });

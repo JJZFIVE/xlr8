@@ -1,27 +1,52 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const carModel = require("./models/carmodels");
 const app = express();
 
 app.use(express.json());
 
-mongoose.connect(
-  "mongodb+srv://madmin:<password>@clustername.mongodb.net/<dbname>?retryWrites=true&w=majority",
-  {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  }
-);
-
-// 8x8HQ4WichXXu2S
-// 4WAd@!3NGJ@kKji
+// username: testaccount
+// password123ab
 const URI =
-  "mongodb+srv://jjzfive-harkness:4WAd%40%213NGJ%40kKji@cluster0.m1my3.mongodb.net/test?retryWrites=true&w=majority";
+  "mongodb+srv://testaccount:password123ab@cluster0.m1my3.mongodb.net/xlr8test?retryWrites=true&w=majority";
+
 dotenv.config();
 
+mongoose.connect(URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+});
+
 app.get("/", async (req, res) => {
-  res.send("hi you");
+  const newCar = new carModel({
+    wheel: 6,
+    engine: 29,
+    build: 394,
+    wrapping: 400,
+    fullcarimage: "ipfs-full-car-image",
+    fullcarvox: "ipfs-full-car-vox",
+    fullcarmetadata: "ipfs-full-car-metadata",
+  });
+
+  newCar.save((err, user) => {
+    if (err) {
+      res.json({
+        success: false,
+        message: "There was a problem with saving a new car",
+      });
+    }
+  });
+
+  // .find() allows you to filter by certain criteria
+  const cars = await carModel.find({});
+
+  try {
+    res.status(200).send(cars);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 app.listen(3000);

@@ -20,4 +20,4 @@ password: 4WAd%40%213NGJ%40kKji
 3. api/.env - Ensures that if someone has the github repo, they cannot see the login variables 
 - Set up .env and environment variables, use dotenv to pull into server.js file
 
-
+4. create new car metadata when someone is fusing, and save that back to mongo atlas
