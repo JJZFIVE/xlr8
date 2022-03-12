@@ -102,7 +102,7 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
         
         // Generate new API request URL
-        string memory apiRequest = string(abi.encodePacked(FuserAPI, _wheelMetadataId.toString(), "-", _engineMetadataId.toString(), "-", _buildMetadataId.toString(), "-", _wrappingMetadataId.toString()));
+        string memory apiRequest = string(abi.encodePacked(FuserAPI, _wheelMetadataId.toString(), "/", _engineMetadataId.toString(), "/", _buildMetadataId.toString(), "/", _wrappingMetadataId.toString()));
         request.add("get", apiRequest);
         request.add("path", "tokenURI");
         

@@ -13,6 +13,7 @@ password: 4WAd%40%213NGJ%40kKji
     - How do we test this? Develop testing
 
 2. api/models/carmodels.js - unfinished car schema
+https://www.digitalocean.com/community/tutorials/nodejs-crud-operations-mongoose-mongodb-atlas
 - This has already been started
 - TODO: research mongoose schema creation
 - TODO: develop tests to see if what's been created is correct
