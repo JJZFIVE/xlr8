@@ -1,4 +1,6 @@
 {
+  "name": "XLR8 Wheel #183",
+  "description": "Description here.",
   "image": "ipfs://<IPFS DIRECTORY CID>/<CID FOR COMPONENT IMAGE>",
   "vox": "ipfs://<IPFS DIRECTORY CID>/<CID FOR COMPONENT VOX FILE>",
   "attributes": [
