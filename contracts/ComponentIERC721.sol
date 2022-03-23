@@ -3,6 +3,8 @@
 
 // Modified by Joe 
 
+// I think it'll be a bit more clean to just have a new interface extend IERC721 instead of editing it
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";

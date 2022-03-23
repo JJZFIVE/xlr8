@@ -1,6 +1,6 @@
 # XLR8
 
-Vroom Vroom
+Vroom Vroom!
 
 ## Uploading to IPFS
 
