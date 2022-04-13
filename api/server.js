@@ -84,6 +84,7 @@ app.get("/all-cars", async (req, res) => {
   }
 });
 
+// Dear God also for testing only. Remove for production
 app.get("/delete-all", async (req, res) => {
   const del = await carModel.remove({}, (callback) => {
     console.log(callback);

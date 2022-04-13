@@ -94,7 +94,7 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
         }
         // Something's gone wrong if this block executes
         else {
-            require(1 == 0, "Something's wrong with _mintingCounter");
+            revert("Something's wrong with _mintingCounter");
         }
 
         addressToNumberOfMints[msg.sender] += 1;

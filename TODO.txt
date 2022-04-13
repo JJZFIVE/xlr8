@@ -2,23 +2,20 @@ Project Management
 
 Files we're working on right now:
 
-1. api/server.js - Contains the endpoint (done with express) that will be called by Chainlink
-- TODO: Be able to connect mongoose to our MongoDB Atlas TEST account with credentials:
-username: jjzfive-harkness
-password: 4WAd%40%213NGJ%40kKji
-    - heads up: mongo connection doesn't like @ and ! 
-
-- TODO: Enumerate the part numbers at the end of the get request with express (just a google search)
-- TODO: Figure out querying mongo with the token indices
-    - How do we test this? Develop testing
-
-2. api/models/carmodels.js - unfinished car schema
+1. api/models/carmodels.js - unfinished car schema
 https://www.digitalocean.com/community/tutorials/nodejs-crud-operations-mongoose-mongodb-atlas
 - This has already been started
 - TODO: research mongoose schema creation
 - TODO: develop tests to see if what's been created is correct
 
-3. api/.env - Ensures that if someone has the github repo, they cannot see the login variables 
-- Set up .env and environment variables, use dotenv to pull into server.js file
+2. ipfs-uploading/
+COMPONENTS
+- TODO: organize files in folders at corresponding indicies 
+- TODO: randomize filenames, all unique, from 0 -> maxSupply - 1.png or .vox
+- TODO: Create metadata with randomized stats for each unique component
+- TODO: create uploading function for components
+    - image and vox first, then generate metadata, then save that metadata to a new folder (to be mass uploaded later as directory)
 
-4. create new car metadata when someone is fusing, and save that back to mongo atlas
+FULL CARS
+- TODO: upload image, vox for full car
+- TODO: Generate metadata for full cars
