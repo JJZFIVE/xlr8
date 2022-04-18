@@ -33,7 +33,6 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     uint256 public mintingFee;
     uint256 public saleStartTime; // Block timestamp of when the minting opens
     Counters.Counter private _mintingCounter; // Range: [0, 8)
-    bool public revealBool = false;
 
     // Double check the VRFConsumerBase links - taken from vox collectibles
     constructor(uint256 _saleStartTime, 
@@ -64,6 +63,7 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
 
     // It's assumed that max supplies for each component are equal
     function mintRandomComponent() public payable {
+        require(tx.origin == msg.sender);
         require(block.timestamp >= saleStartTime, "Sale has not started");
         require(msg.value >= mintingFee, "The value submitted is less than the minting fee");
         require(addressToNumberOfMints[msg.sender] < 4, "Sender has already minted the maximum of 4 components"); // Each address can only mint up to 4 components
@@ -107,16 +107,11 @@ contract XLR8Minter is Ownable, VRFConsumerBase, IXLR8Minter {
     // function swapETHForUSDC() public onlyOwner {}
 
     // function swapUSDCforETH() public onlyOwner {}
-
-    function setRevealBool() public onlyOwner {
-        require(!revealBool, "RevealBool has already been set to true");
-        revealBool = true;
-    }
     
-    function reveal() public {
+    // TODO: Consider making this executable after the max minting supply reached instead of an onlyOwner
+    function reveal() public onlyOwner {
         require(offset == 0, "Offset is already set");
         require(vrfRequestId == 0, "Randomness already requested");
-        require(revealBool, "Can not be revealed yet");
         vrfRequestId = requestRandomness(keyHash, vrfFee);
     }
 

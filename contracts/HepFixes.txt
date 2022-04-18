@@ -3,8 +3,7 @@ D = Done
 D - ComponentIERC721 extends IERC721 instead of rewriting it
 - merkle proofs/roots for whitelisting
 - remove hardcoding for VRF, change to chainlink constructor
-- line 75 under mintRandomComponent() // add: require(tx.origin == msg.sender) to prevent smart contracts (and therefore bots) from minting. 
+D - line 75 under mintRandomComponent() // add: require(tx.origin == msg.sender) to prevent smart contracts (and therefore bots) from minting. 
 D - changed falsy require to a revert()
 - Consider removing the else revert() altogether
-- revealbool vs. just do onlyOwner
 - check require(vrfRequestId == requestId, "VRF Request Id must match"); - Was in Vox Collectibles. take out?
