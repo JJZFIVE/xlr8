@@ -93,6 +93,7 @@ contract Car is ERC721URIStorage, Ownable, ChainlinkClient {
         _tokenId.increment();
         uint256 tokenId = _tokenId.current();
         requestIdToTokenId[_requestId] = tokenId;
+        _mint(msg.sender, tokenId);
 
         // in the fulfill function, set the token URI of the newly minted token id
     }
