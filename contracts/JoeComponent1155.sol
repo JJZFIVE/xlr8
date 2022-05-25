@@ -6,13 +6,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+import "hardhat/console.sol";
+
 /*
 * @title ERC1155 token for XLR8 Components
 * @author JJZFIVE
 */
 
 // Just one 1155 contract that holds all components 
-// (i.e. one opensea page for all components), and one 721 contract for full cars (i.e. one opensea page for full cars)
+// (i.e. one opensea paCge for all components), and one 721 contract for full cars (i.e. one opensea page for full cars)
 // And in the 1155 contract we just keep track of which ID # corresponds to which component type
 
 // TODO: Keep in mind that we'll be using this contract for the next seasons
@@ -29,6 +31,27 @@ contract XLR8Components is ERC1155, Ownable {
     string public symbol;   
     string _prerevealURI; 
     uint256 public currentSeason;
+
+    struct Season {
+        bool revealed;
+        uint256 maxMintPerAddress;
+        uint256 totalNumComponents;
+        string baseUri;
+        string prerevealUri;
+    }
+
+    // Mapping of the season # to the Season struct with its data
+    mapping(uint256 => Season) public seasonToSeasonData;
+
+
+    /* 
+        Minting variables
+    */
+    uint256 public maxMintForSeason;
+    address private _lastAddressToMint; // Address of last person who minted to factor into the mint randomness function
+
+    // TODO: Somehow combine these mappings into a struct? Will this save space?
+    // Like a Season struct with all its data!! Do this!! // TODO
 
     mapping(uint256 => bool) public seasonToRevealed;
 
@@ -51,9 +74,10 @@ contract XLR8Components is ERC1155, Ownable {
         string memory _name,
         string memory _symbol,
         string memory _season0baseuri,
+        string memory _season0prerevealuri,
         uint256[] memory _maxSupplies, 
         uint256[] memory _componentTypes,
-        string memory _season0prerevealuri
+        uint256 _maxMintForSeason0
     ) ERC1155(_season0baseuri) {
         require(_maxSupplies.length == _componentTypes.length, "_maxSupplies and _componentTypes must be the same length");
 
@@ -61,8 +85,11 @@ contract XLR8Components is ERC1155, Ownable {
         symbol = _symbol;
 
         currentSeason = 0;
+        maxMintForSeason = _maxMintForSeason0;
         seasonToRevealed[currentSeason] = false;
         seasonToBaseURI[currentSeason] = _season0baseuri;
+
+        _lastAddressToMint = msg.sender; // Arbitrarily chose this, not really important
 
         // Same code as addNewComponents, but wanted function parameter to be calldata,
         // and not compatible with constructor memory paramter
@@ -97,9 +124,10 @@ contract XLR8Components is ERC1155, Ownable {
         uint256[] calldata _maxSupplies,
         uint256[] calldata _componentTypes,
         string calldata _seasonBaseUri,
-        string calldata _newPrerevealUri ) public onlyOwner {
+        string calldata _newPrerevealUri ,
+        uint256 _maxMintForSeason ) public onlyOwner {
         require(_maxSupplies.length == _componentTypes.length, "_maxSupplies and _componentTypes must be the same length");
-
+        maxMintForSeason = _maxMintForSeason;
 
         _lastSeasonTotalNumComponents = _tokenIds.current();
         currentSeason += 1;
@@ -139,16 +167,31 @@ contract XLR8Components is ERC1155, Ownable {
         return _id >= _lastSeasonTotalNumComponents;
     }
 
+    function getRandomNumber(uint256 _balanceOfNum, uint256 _previousRandNum) internal view returns (uint256) {
+        uint256 numInCurrentSeason = _tokenIds.current() - _lastSeasonTotalNumComponents;
+        return uint256(keccak256(abi.encodePacked(msg.sender, _lastAddressToMint, block.timestamp))) % numInCurrentSeason;
+    }
+
     
 
     // TODO: General mint function (exclude whitelist for now)
     // Must check if the id # is below the _tokenIds counter and has not reached maxsupply
+    // Set the _lastAddressToMint = msg.sender
+    function mintComponent(uint256 amount) public payable {
+        require(tx.origin == msg.sender);
+        require(msg.value >= mintingFee, "The value submitted is less than the minting fee");
+
+        uint256 randnum = getRandomNumber();
+        _mint(msg.sender, randnum, 1, "");
+
+
+    }
 
 
     /**
      * @dev Indicates whether any token exist with a given id, or not.
      */
-     function exists(uint256 id) public view returns (bool) {
+    function exists(uint256 id) public view returns (bool) {
         return idToMaxSupply[id] > 0;
     }
 
