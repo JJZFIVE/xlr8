@@ -158,23 +158,49 @@ contract XLR8Components is ERC1155, Ownable {
     function mintComponent(uint256 amount) public payable {
         require(tx.origin == msg.sender);
         require(msg.value >= amount * seasonToSeasonData[currentSeason].mintingFee, "Incorrect payment");
+        require(amount + seasonToAddressToNumberOfMints[currentSeason][msg.sender] <= seasonToSeasonData[currentSeason].maxMintPerAddress, "Mint amount exceeds maximum allowed per address");
 
         seasonToAddressToNumberOfMints[currentSeason][msg.sender] = 0; // TODO: Maybe take this out, might init to 0 anyways
 
+        // Mint the correct amount of times
         uint256 mintId = 0;
         for (uint i = 0; i < amount; i++) {
+            // Gets a random number based off of the previous minter, 
             uint balanceOfpreviousMintId = balanceOf(msg.sender, mintId);
             mintId = getRandomNumber(balanceOfpreviousMintId, mintId);
 
-            // TODO: check if randNum's been minted out, and if so, increment until it settles in
-            
+            // TODO: check if randNum's been minted out, and if so, increment until it mints
+            uint256 numComponentsInSeason = _tokenIds.current() - seasonToSeasonData[currentSeason].lastSeasonTotalNumComponents;
+            uint256 newMintId;
+            bool foundComponentToMint = false;
+            for (uint j = 0; j < numComponentsInSeason; j++) {
+                newMintId = mintId + j;
+                 // Has not reached max supply yet: break the loop and mint
+                if (idToComponent[newMintId].numberMinted < idToComponent[newMintId].maxSupply) {
+                    foundComponentToMint = true;
+                    break;
+                }
+                // Has reached max supply: increment the counter by 1 and try the next id
+                else {
 
-            _mint(msg.sender, mintId, 1, "");
+                    if (newMintId + 1 == numComponentsInSeason) {
+                        // Trying to mint id out of range. Reset to first component id of the season
+                        j -= numComponentsInSeason;
+                    }
+                    else {
+                        j += 1;
+                    } 
+                }
+            }
+            require(foundComponentToMint, "All components in season are minted out!");
+
+            _mint(msg.sender, newMintId, 1, "");
+            idToComponent[newMintId].numberMinted += 1;
             seasonToAddressToNumberOfMints[currentSeason][msg.sender] += 1;
+            console.log("Minted", newMintId, "for", msg.sender);
         }
         
-
-
+        _lastAddressToMint = msg.sender;
     }
 
 
