@@ -145,18 +145,19 @@ contract XLR8Components is ERC1155, Ownable {
     }
 
 
+    // Gets a random number within the range of valid mintable id's for the current season
     function getRandomNumber(uint256 _balanceOfNum, uint256 _previousRandNum) internal view returns (uint256) {
         uint256 numInCurrentSeason = _tokenIds.current() - seasonToSeasonData[currentSeason].lastSeasonTotalNumComponents;
-        return uint256(keccak256(abi.encodePacked(_balanceOfNum, _previousRandNum, _lastAddressToMint, block.timestamp))) % numInCurrentSeason;
+        return uint256(keccak256(abi.encodePacked(_balanceOfNum, _previousRandNum, _lastAddressToMint, block.timestamp))) % numInCurrentSeason + seasonToSeasonData[currentSeason].lastSeasonTotalNumComponents;
     }
 
     
 
-    // TODO: General mint function (exclude whitelist for now)
+    // TODO: Include a whitelist ability
     // Must check if the id # is below the _tokenIds counter and has not reached maxsupply
     // Set the _lastAddressToMint = msg.sender
     function mintComponent(uint256 amount) public payable {
-        require(tx.origin == msg.sender);
+        require(tx.origin == msg.sender, "Transaction origin must be msg.sender");
         require(msg.value >= amount * seasonToSeasonData[currentSeason].mintingFee, "Incorrect payment");
         require(amount + seasonToAddressToNumberOfMints[currentSeason][msg.sender] <= seasonToSeasonData[currentSeason].maxMintPerAddress, "Mint amount exceeds maximum allowed per address");
 
@@ -169,7 +170,7 @@ contract XLR8Components is ERC1155, Ownable {
             uint balanceOfpreviousMintId = balanceOf(msg.sender, mintId);
             mintId = getRandomNumber(balanceOfpreviousMintId, mintId);
 
-            // TODO: check if randNum's been minted out, and if so, increment until it mints
+            // Checks if mintId's been minted out, and if so, increment through mintId's until one mints
             uint256 numComponentsInSeason = _tokenIds.current() - seasonToSeasonData[currentSeason].lastSeasonTotalNumComponents;
             uint256 newMintId;
             bool foundComponentToMint = false;
@@ -182,14 +183,10 @@ contract XLR8Components is ERC1155, Ownable {
                 }
                 // Has reached max supply: increment the counter by 1 and try the next id
                 else {
-
-                    if (newMintId + 1 == numComponentsInSeason) {
+                    if (newMintId + 1 == _tokenIds.current()) {
                         // Trying to mint id out of range. Reset to first component id of the season
                         j -= numComponentsInSeason;
                     }
-                    else {
-                        j += 1;
-                    } 
                 }
             }
             require(foundComponentToMint, "All components in season are minted out!");
