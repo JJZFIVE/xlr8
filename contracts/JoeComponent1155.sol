@@ -28,7 +28,7 @@ contract XLR8Components is ERC1155, Ownable {
 
     string public name;
     string public symbol;   
-    uint256 public currentSeason;
+    uint8 public currentSeason;
 
     struct Season {
         bool revealed;
@@ -63,7 +63,7 @@ contract XLR8Components is ERC1155, Ownable {
         string memory _season0baseuri,
         string memory _season0prerevealuri,
         uint256[] memory _maxSupplies, 
-        uint256[] memory _componentTypes,
+        uint8[] memory _componentTypes,
         uint256 _maxMintForSeason0,
         uint256 _season0mintingFee
     ) ERC1155(_season0baseuri) {
@@ -102,7 +102,7 @@ contract XLR8Components is ERC1155, Ownable {
     */
     function addNewSeason(
         uint256[] calldata _maxSupplies,
-        uint256[] calldata _componentTypes,
+        uint8[] calldata _componentTypes,
         string calldata _seasonBaseUri,
         string calldata _newPrerevealUri ,
         uint256 _maxMintForSeason,
