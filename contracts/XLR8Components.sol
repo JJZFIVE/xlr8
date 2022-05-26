@@ -67,7 +67,8 @@ contract XLR8Components is ERC1155, Ownable {
         symbol = "XLR8_COMP";
 
         currentSeason = 0;
-        seasonToSeasonData[currentSeason] = Season(false, _maxMintForSeason0, _season0mintingFee, 0, _season0baseuri, _season0prerevealuri);
+        uint256 mintingFee = _season0mintingFee; // TODO: * (1 ether) 
+        seasonToSeasonData[currentSeason] = Season(false, _maxMintForSeason0, mintingFee, 0, _season0baseuri, _season0prerevealuri);
 
         _lastAddressToMint = msg.sender; // Arbitrarily chose this, not really important
 
@@ -105,8 +106,9 @@ contract XLR8Components is ERC1155, Ownable {
 
         currentSeason += 1;
         uint256 lastSeasonTotalNumComponents = _tokenIds.current();
+        uint256 mintingFee = _mintingFee; // TODO: * (1 ether) 
 
-        seasonToSeasonData[currentSeason] = Season(false, _maxMintForSeason, _mintingFee, lastSeasonTotalNumComponents, _seasonBaseUri, _newPrerevealUri);
+        seasonToSeasonData[currentSeason] = Season(false, _maxMintForSeason, mintingFee, lastSeasonTotalNumComponents, _seasonBaseUri, _newPrerevealUri);
 
         uint256 tokenId;
         for (uint i = 0; i < _maxSupplies.length; i++) {
@@ -191,6 +193,12 @@ contract XLR8Components is ERC1155, Ownable {
         }
         
         _lastAddressToMint = msg.sender;
+    }
+
+    function withdraw(uint256 _amount) onlyOwner public {
+        uint balance = address(this).balance;
+        require(_amount <= balance, "Withdraw amount exceeds contract balance");
+        payable(owner()).transfer(_amount);
     }
 
 
