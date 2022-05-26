@@ -6,16 +6,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 /*
 * @title ERC1155 token for XLR8 Components
 * @author JJZFIVE
 */
-
-// Just one 1155 contract that holds all components 
-// (i.e. one opensea paCge for all components), and one 721 contract for full cars (i.e. one opensea page for full cars)
-// And in the 1155 contract we just keep track of which ID # corresponds to which component type
 
 // TODO: Keep in mind that we'll be using this contract for the next seasons
 
@@ -58,8 +54,6 @@ contract XLR8Components is ERC1155, Ownable {
     // mapping (uint256 => uint256) public seasonToRevealTimestamp;
 
     constructor(
-        string memory _name,
-        string memory _symbol,
         string memory _season0baseuri,
         string memory _season0prerevealuri,
         uint256[] memory _maxSupplies, 
@@ -69,8 +63,8 @@ contract XLR8Components is ERC1155, Ownable {
     ) ERC1155(_season0baseuri) {
         require(_maxSupplies.length == _componentTypes.length, "_maxSupplies and _componentTypes must be the same length");
 
-        name = _name;
-        symbol = _symbol;
+        name = "XLR8Components";
+        symbol = "XLR8_COMP";
 
         currentSeason = 0;
         seasonToSeasonData[currentSeason] = Season(false, _maxMintForSeason0, _season0mintingFee, 0, _season0baseuri, _season0prerevealuri);
@@ -194,7 +188,6 @@ contract XLR8Components is ERC1155, Ownable {
             _mint(msg.sender, newMintId, 1, "");
             idToComponent[newMintId].numberMinted += 1;
             seasonToAddressToNumberOfMints[currentSeason][msg.sender] += 1;
-            console.log("Minted", newMintId, "for", msg.sender);
         }
         
         _lastAddressToMint = msg.sender;
